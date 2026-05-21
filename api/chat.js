@@ -21,23 +21,17 @@ export default async function handler(req, res) {
         'X-Title': 'Niro AI'
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3.3-70b-instruct:free',
+        model: 'google/gemma-3-27b-it:free',
         messages: [
-          {
-            role: 'system',
-            content: 'أنت Niro AI، مساعد ذكاء اصطناعي ذكي ومفيد. تتحدث بالعربية دائماً.'
-          },
+          { role: 'system', content: 'أنت Niro AI مساعد ذكي تتحدث بالعربية دائماً.' },
           ...messages
         ]
       })
     });
 
     const rawText = await response.text();
-    console.log('OpenRouter status:', response.status);
-    console.log('OpenRouter response:', rawText);
-
     if (!response.ok) {
-      return res.status(200).json({ reply: `خطأ من OpenRouter: ${response.status} - ${rawText.slice(0, 100)}` });
+      return res.status(200).json({ reply: `خطأ: ${response.status} - ${rawText.slice(0, 100)}` });
     }
 
     const data = JSON.parse(rawText);
@@ -45,7 +39,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply });
 
   } catch (error) {
-    console.error('Server error:', error);
-    return res.status(200).json({ reply: `خطأ في السيرفر: ${error.message}` });
+    return res.status(200).json({ reply: `خطأ: ${error.message}` });
   }
 }
