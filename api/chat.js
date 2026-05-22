@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         'X-Title': 'Niro AI'
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct:free',
+        model: 'deepseek/deepseek-chat-v3-0324:free',
         messages: [
           {
             role: 'system',
@@ -35,9 +35,7 @@ export default async function handler(req, res) {
     const rawText = await response.text();
 
     if (!response.ok) {
-      return res.status(200).json({ 
-        reply: `خطأ: ${response.status} - ${rawText.slice(0, 100)}` 
-      });
+      return res.status(200).json({ reply: `خطأ: ${response.status} - ${rawText.slice(0, 100)}` });
     }
 
     const data = JSON.parse(rawText);
