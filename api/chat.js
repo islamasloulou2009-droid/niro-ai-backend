@@ -12,25 +12,28 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid messages' });
     }
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://islamasloulou2009-droid.github.io/NIRO-QI/',
-        'X-Title': 'Niro AI'
-      },
-      body: JSON.stringify({
-        model: 'deepseek/deepseek-v4-flash:free',
-        messages: [
-          {
-            role: 'system',
-            content: 'أنت Niro AI، مساعد ذكاء اصطناعي ذكي ومفيد وودود. تتحدث بالعربية دائماً ما لم يتحدث المستخدم بلغة أخرى. ردودك واضحة ومنظمة ومفيدة.'
-          },
-          ...messages
-        ]
-      })
-    });
+    const ACCOUNT_ID = 'ca2683f26d091b8c72054dcef21340cd';
+    const API_TOKEN = process.env.CF_API_TOKEN;
+
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/ai/run/@cf/meta/llama-3.1-8b-instruct`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content: 'أنت Niro AI، مساعد ذكاء اصطناعي ذكي ومفيد وودود. تتحدث بالعربية دائماً ما لم يتحدث المستخدم بلغة أخرى. ردودك واضحة ومنظمة ومفيدة.'
+            },
+            ...messages
+          ]
+        })
+      }
+    );
 
     const rawText = await response.text();
 
@@ -39,7 +42,7 @@ export default async function handler(req, res) {
     }
 
     const data = JSON.parse(rawText);
-    const reply = data.choices?.[0]?.message?.content || 'عذراً، لم أتمكن من الرد.';
+    const reply = data.result?.response || 'عذراً، لم أتمكن من الرد.';
     return res.status(200).json({ reply });
 
   } catch (error) {
