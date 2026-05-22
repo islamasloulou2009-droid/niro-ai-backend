@@ -21,17 +21,23 @@ export default async function handler(req, res) {
         'X-Title': 'Niro AI'
       },
       body: JSON.stringify({
-        model: 'google/gemma-3-27b-it:free',
+        model: 'mistralai/mistral-7b-instruct:free',
         messages: [
-          { role: 'system', content: 'أنت Niro AI مساعد ذكي تتحدث بالعربية دائماً.' },
+          {
+            role: 'system',
+            content: 'أنت Niro AI، مساعد ذكاء اصطناعي ذكي ومفيد وودود. تتحدث بالعربية دائماً ما لم يتحدث المستخدم بلغة أخرى. ردودك واضحة ومنظمة ومفيدة.'
+          },
           ...messages
         ]
       })
     });
 
     const rawText = await response.text();
+
     if (!response.ok) {
-      return res.status(200).json({ reply: `خطأ: ${response.status} - ${rawText.slice(0, 100)}` });
+      return res.status(200).json({ 
+        reply: `خطأ: ${response.status} - ${rawText.slice(0, 100)}` 
+      });
     }
 
     const data = JSON.parse(rawText);
